@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Zombie Hunter</title>
+<style>
+body{margin:0;background:black;overflow:hidden;}
+canvas{display:block;}
+</style>
+</head>
+<body>
+<script>
+
+let c=document.getElementById("game")
+let ctx=c.getContext("2d")
+c.width=innerWidth
+c.height=innerHeight
+
+let player={x:c.width/2,y:c.height-100}
+let zombies=[]
+let bullets=[]
+let score=0
+
+setInterval(()=>{
+zombies.push({x:Math.random()*c.width,y:-20})
+},800)
+
+setInterval(()=>{
+bullets.push({x:player.x,y:player.y})
+},300)
+
+document.addEventListener("touchmove",e=>{
+player.x=e.touches[0].clientX
+})
+
+function loop(){
+
+ctx.fillStyle="black"
+ctx.fillRect(0,0,c.width,c.height)
+
+ctx.fillStyle="cyan"
+ctx.fillRect(player.x-20,player.y-20,40,40)
+
+bullets.forEach((b,bi)=>{
+b.y-=10
+ctx.fillStyle="yellow"
+ctx.fillRect(b.x-3,b.y-10,6,10)
+
+zombies.forEach((z,zi)=>{
+if(Math.abs(b.x-z.x)<20 && Math.abs(b.y-z.y)<20){
+zombies.splice(zi,1)
+bullets.splice(bi,1)
+score++
+}
+})
+})
+
+zombies.forEach((z,zi)=>{
+z.y+=3
+ctx.fillStyle="green"
+ctx.fillRect(z.x-20,z.y-20,40,40)
+
+if(Math.abs(z.x-player.x)<30 && Math.abs(z.y-player.y)<30){
+alert("Game Over Score:"+score)
+location.reload()
+}
+})
+
+ctx.fillStyle="white"
+ctx.font="30px Arial"
+ctx.fillText("Score:"+score,20,40)
+
+requestAnimationFrame(loop)
+}
+loop()
+
+</script>
+</body>
+</html>
